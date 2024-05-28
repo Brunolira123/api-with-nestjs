@@ -1,30 +1,38 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import { CreatePlayerDTO } from './dtos/createPlayer.dto';
-import { JogadoresService } from './jogadores.service';
-import { Jogador } from './interfaces/jogador.interface';
+import { Controller, Post, Body, Get, Query, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
+import { JogadoresService } from './jogadores.service'
+import { Jogador } from './interfaces/jogador.interface'
+import { JogadoresValicacaoParametrosPipe } from './pipes/jogadores-validacao-parametros.pipe';
+
 
 @Controller('api/v1/jogadores')
 export class JogadoresController {
 
-    constructor(private readonly jogadoresService: JogadoresService) { }
+    constructor(private readonly jogadoresService: JogadoresService) {}
 
     @Post()
-    async createUpdatePlayer(
-        @Body() createPlayerDTO: CreatePlayerDTO) {
-        await this.jogadoresService.createUpdatePlayer(createPlayerDTO);
+    @UsePipes(ValidationPipe)
+    async criarAtualizarJogador(
+        @Body() criaJogadorDto: CreatePlayerDTO) {
+        await this.jogadoresService.criarAtualizarJogador(criaJogadorDto)
+             
     }
 
     @Get()
-    async getPlayer(
+    async consultarJogadores(
         @Query('email') email: string): Promise<Jogador[] | Jogador> {
-            if(email){
-                return  await this.jogadoresService.findByEmail(email);
+            if (email) {
+                return await this.jogadoresService.consultarJogadorPeloEmail(email);
+            } else {
+                return await this.jogadoresService.consultarTodosJogadores();
             }
-        return await this.jogadoresService.findAll();
+        
     }
 
     @Delete()
-    async delete(@Query('email')email:string):Promise<void>{
-        this.jogadoresService.delete(email)
-    }
+    async deletarJogador(
+        @Query('email',JogadoresValicacaoParametrosPipe) email: string): Promise<void> {
+            await this.jogadoresService.deletarJogador(email)
+        }
+
 }
