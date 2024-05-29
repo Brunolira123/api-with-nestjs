@@ -53,6 +53,15 @@ export class JogadoresService {
     if (!jogadorEncontrado) {
       throw new BadRequestException(`Jogador com o id: ${_id} nao encontrado!`)
     }
+
   }
 
+  private async atualizar(criarJogadorDto: CreatePlayerDTO): Promise<Jogador> {
+    return await this.jogadorModel
+      .findOneAndUpdate(
+        { email: criarJogadorDto.email },
+        { $set: criarJogadorDto },
+      )
+      .exec();
+  }
 }

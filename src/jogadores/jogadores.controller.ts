@@ -6,10 +6,11 @@ import { JogadoresValicacaoParametrosPipe } from './pipes/jogadores-validacao-pa
 import { UpdatePlayerDTO } from './dtos/updatePlayer.dto';
 
 
+
 @Controller('api/v1/jogadores')
 export class JogadoresController {
 
-    constructor(private readonly jogadoresService: JogadoresService) { }
+    constructor(private readonly jogadoresService: JogadoresService) {}
 
     @Post()
     @UsePipes(ValidationPipe)
